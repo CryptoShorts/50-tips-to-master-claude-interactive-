@@ -1,0 +1,697 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>50 Tips To Master Claude</title>
+  <style>
+    :root {
+      --bg: #faf8f4;
+      --card-bg: #ffffff;
+      --border: #e8e0d4;
+      --text: #2c2416;
+      --muted: #7a6e60;
+      --accent: #5b4fff;
+
+      --c-start:   #fff8e6;
+      --c-prompt:  #e8f4e8;
+      --c-code:    #e6f0ff;
+      --c-proj:    #fff0e6;
+      --c-ext:     #f9e6ff;
+      --c-art:     #e6fff8;
+      --c-creator: #ffe6ef;
+      --c-biz:     #fffbe6;
+      --c-adv:     #e6eeff;
+      --c-power:   #ffe6e6;
+
+      --h-start:   #b8860b;
+      --h-prompt:  #2d7a2d;
+      --h-code:    #1a5fbf;
+      --h-proj:    #bf5a1a;
+      --h-ext:     #7a1abf;
+      --h-art:     #0a8a6a;
+      --h-creator: #bf1a50;
+      --h-biz:     #8a7a00;
+      --h-adv:     #1a3abf;
+      --h-power:   #bf1a1a;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: 'Georgia', serif;
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+    }
+
+    /* ── PROGRESS BAR ── */
+    .progress-bar-wrap {
+      height: 4px;
+      background: var(--border);
+      position: sticky;
+      top: 0;
+      z-index: 300;
+    }
+    .progress-bar {
+      height: 100%;
+      background: linear-gradient(90deg, #6366f1, #8b5cf6, #ec4899);
+      transition: width .4s ease;
+      width: 0%;
+    }
+
+    /* ── HEADER ── */
+    header {
+      text-align: center;
+      padding: 52px 24px 36px;
+      background: linear-gradient(135deg, #1e1b4b 0%, #312e81 50%, #1e1b4b 100%);
+      color: #fff;
+      position: relative;
+      overflow: hidden;
+    }
+    header::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background:
+        radial-gradient(ellipse at 25% 60%, rgba(139,92,246,.35) 0%, transparent 55%),
+        radial-gradient(ellipse at 75% 30%, rgba(99,102,241,.28) 0%, transparent 50%);
+      pointer-events: none;
+    }
+    header .inner { position: relative; z-index: 1; }
+    header h1 {
+      font-size: clamp(2rem, 5vw, 3.6rem);
+      font-weight: 900;
+      letter-spacing: -1.5px;
+      line-height: 1.1;
+    }
+    header h1 span { color: #a5b4fc; }
+    header p {
+      margin-top: 10px;
+      font-size: clamp(0.88rem, 2vw, 1.1rem);
+      color: #c7d2fe;
+      font-style: italic;
+    }
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      margin-top: 20px;
+      background: rgba(255,255,255,.12);
+      border: 1px solid rgba(255,255,255,.2);
+      border-radius: 999px;
+      padding: 7px 20px;
+      font-size: 0.8rem;
+      color: #e0e7ff;
+      letter-spacing: .4px;
+    }
+    .progress-summary {
+      margin-top: 14px;
+      font-size: 0.82rem;
+      color: #a5b4fc;
+    }
+    .progress-summary strong { color: #fff; }
+
+    /* ── CONTROLS ── */
+    .controls {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 10px;
+      padding: 16px 28px;
+      background: #fff;
+      border-bottom: 1.5px solid var(--border);
+      position: sticky;
+      top: 4px;
+      z-index: 200;
+      box-shadow: 0 2px 16px rgba(0,0,0,.07);
+    }
+    .search-wrap {
+      position: relative;
+      flex: 1;
+      min-width: 180px;
+      max-width: 360px;
+    }
+    .search-wrap svg {
+      position: absolute;
+      left: 11px;
+      top: 50%;
+      transform: translateY(-50%);
+      color: var(--muted);
+      pointer-events: none;
+    }
+    #search {
+      width: 100%;
+      padding: 8px 12px 8px 36px;
+      border: 1.5px solid var(--border);
+      border-radius: 8px;
+      font-size: 0.88rem;
+      background: var(--bg);
+      color: var(--text);
+      outline: none;
+      transition: border-color .2s;
+      font-family: inherit;
+    }
+    #search:focus { border-color: var(--accent); }
+
+    .filters {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+    }
+    .filter-btn {
+      padding: 5px 13px;
+      border-radius: 999px;
+      border: 1.5px solid var(--border);
+      background: var(--card-bg);
+      font-size: 0.75rem;
+      font-weight: 700;
+      cursor: pointer;
+      transition: all .15s;
+      color: var(--text);
+      white-space: nowrap;
+      font-family: inherit;
+    }
+    .filter-btn:hover { border-color: var(--accent); color: var(--accent); background: #f5f3ff; }
+    .filter-btn.active { background: var(--accent); color: #fff; border-color: var(--accent); }
+
+    .stats {
+      margin-left: auto;
+      font-size: 0.78rem;
+      color: var(--muted);
+      white-space: nowrap;
+    }
+    #count { font-weight: 800; color: var(--accent); }
+
+    /* ── BOARD GRID ── */
+    .board {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(310px, 1fr));
+      gap: 22px;
+      padding: 28px 28px 48px;
+      max-width: 1480px;
+      margin: 0 auto;
+    }
+
+    /* ── SECTION CARD ── */
+    .section-card {
+      background: var(--card-bg);
+      border-radius: 14px;
+      border: 1.5px solid var(--border);
+      overflow: hidden;
+      box-shadow: 0 2px 8px rgba(0,0,0,.04);
+      transition: box-shadow .2s, transform .2s;
+    }
+    .section-card:hover {
+      box-shadow: 0 8px 30px rgba(0,0,0,.1);
+      transform: translateY(-2px);
+    }
+
+    .section-header {
+      padding: 13px 16px;
+      display: flex;
+      align-items: center;
+      gap: 9px;
+      border-bottom: 1.5px solid var(--border);
+    }
+    .section-icon { font-size: 1.25rem; line-height: 1; }
+    .section-label {
+      font-size: 0.78rem;
+      font-weight: 900;
+      letter-spacing: 1.6px;
+      text-transform: uppercase;
+    }
+    .section-pill {
+      margin-left: auto;
+      font-size: 0.68rem;
+      font-weight: 800;
+      background: rgba(0,0,0,.08);
+      border-radius: 999px;
+      padding: 2px 9px;
+      opacity: .75;
+    }
+
+    /* ── TIP ── */
+    .tip-list { padding: 6px 0; }
+    .tip {
+      display: flex;
+      align-items: flex-start;
+      gap: 11px;
+      padding: 10px 16px;
+      cursor: default;
+      transition: background .15s;
+      border-bottom: 1px solid rgba(0,0,0,.04);
+    }
+    .tip:last-child { border-bottom: none; }
+    .tip:hover { background: rgba(91,79,255,.03); }
+    .tip.hidden { display: none !important; }
+
+    .tip-num {
+      flex-shrink: 0;
+      width: 24px;
+      height: 24px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.68rem;
+      font-weight: 900;
+      margin-top: 2px;
+      opacity: .9;
+    }
+
+    .tip-body { flex: 1; min-width: 0; }
+    .tip-title {
+      font-size: 0.86rem;
+      font-weight: 700;
+      line-height: 1.35;
+    }
+    .tip-desc {
+      font-size: 0.76rem;
+      color: var(--muted);
+      margin-top: 2px;
+      line-height: 1.5;
+      font-style: italic;
+    }
+
+    .tip-check {
+      flex-shrink: 0;
+      width: 20px;
+      height: 20px;
+      border-radius: 50%;
+      border: 2px solid #d1d5db;
+      margin-top: 3px;
+      transition: all .18s;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: transparent;
+    }
+    .tip-check:hover { border-color: #22c55e; background: #f0fdf4; }
+    .tip-check svg { display: none; }
+    .tip.done .tip-check { background: #22c55e; border-color: #22c55e; }
+    .tip.done .tip-check svg { display: block; }
+    .tip.done .tip-title { text-decoration: line-through; color: var(--muted); opacity: .7; }
+    .tip.done .tip-desc { opacity: .5; }
+
+    /* search highlight */
+    mark { background: #fef08a; border-radius: 2px; padding: 0 1px; }
+
+    /* ── EMPTY STATE ── */
+    .empty {
+      grid-column: 1 / -1;
+      text-align: center;
+      padding: 80px 20px;
+      color: var(--muted);
+      display: none;
+    }
+    .empty.show { display: block; }
+    .empty .emoji { font-size: 3.5rem; margin-bottom: 14px; }
+    .empty p { font-size: 1rem; }
+
+    /* ── FOOTER ── */
+    footer {
+      text-align: center;
+      padding: 24px;
+      color: var(--muted);
+      font-size: 0.78rem;
+      border-top: 1px solid var(--border);
+    }
+    footer a { color: var(--accent); text-decoration: none; }
+    footer a:hover { text-decoration: underline; }
+
+    @media (max-width: 600px) {
+      .board { padding: 14px; gap: 14px; }
+      .controls { padding: 10px 14px; }
+      header { padding: 36px 16px 28px; }
+    }
+  </style>
+</head>
+<body>
+
+<div class="progress-bar-wrap"><div class="progress-bar" id="progressBar"></div></div>
+
+<header>
+  <div class="inner">
+    <h1>50 Tips To Master <span>Claude</span></h1>
+    <p>The feature that turns Claude into a permanent member of your team.</p>
+    <div class="badge">✦ Interactive Reference Board — click ✓ to track your progress</div>
+    <div class="progress-summary" id="progressSummary">0 of 50 tips mastered</div>
+  </div>
+</header>
+
+<div class="controls">
+  <div class="search-wrap">
+    <svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+      <circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/>
+    </svg>
+    <input id="search" type="search" placeholder="Search tips…" autocomplete="off" spellcheck="false" />
+  </div>
+  <div class="filters" id="filters">
+    <button class="filter-btn active" data-filter="all">All</button>
+    <button class="filter-btn" data-filter="getting-started">🚀 Getting Started</button>
+    <button class="filter-btn" data-filter="prompting">✍️ Prompting</button>
+    <button class="filter-btn" data-filter="claude-code">💻 Claude Code</button>
+    <button class="filter-btn" data-filter="projects">📁 Projects</button>
+    <button class="filter-btn" data-filter="extended-thinking">🧠 Extended Thinking</button>
+    <button class="filter-btn" data-filter="artifacts">⚡ Artifacts</button>
+    <button class="filter-btn" data-filter="for-creators">🎨 For Creators</button>
+    <button class="filter-btn" data-filter="for-business">💼 For Business</button>
+    <button class="filter-btn" data-filter="advanced">🔬 Advanced</button>
+    <button class="filter-btn" data-filter="power-moves">🔥 Power Moves</button>
+  </div>
+  <div class="stats"><span id="count">50</span> tips shown</div>
+</div>
+
+<div class="board" id="board">
+  <div class="empty" id="empty">
+    <div class="emoji">🔍</div>
+    <p>No tips match your search. Try different keywords.</p>
+  </div>
+</div>
+
+<footer>
+  Built with Claude · <a href="https://claude.ai" target="_blank">claude.ai</a>
+  &nbsp;·&nbsp; Original tips by <a href="https://x.com/johnpeslar" target="_blank">John Peslar</a>
+  &nbsp;·&nbsp; Deploy to <a href="https://pages.github.com" target="_blank">GitHub Pages</a> — no build step needed
+</footer>
+
+<script>
+const SECTIONS = [
+  {
+    id: 'getting-started',
+    label: 'Getting Started',
+    icon: '🚀',
+    bg: 'var(--c-start)',
+    hdr: 'var(--h-start)',
+    tips: [
+      { n:1,  title:'Pick The Right Model First',
+              desc:'Talk through ideas and make plans in real time using your voice.' },
+      { n:2,  title:'Use Projects, Not Chats',
+              desc:'Projects remember context and files across every conversation.' },
+      { n:3,  title:'Projects Remember Everything',
+              desc:'Context and files persist so you never re-explain your setup.' },
+      { n:4,  title:'Enable Extended Thinking',
+              desc:'Turn it on for complex problems that need real reasoning.' },
+      { n:5,  title:'Save Your Best Prompts',
+              desc:'Store winning templates inside a dedicated project for reuse.' },
+    ]
+  },
+  {
+    id: 'prompting',
+    label: 'Prompting',
+    icon: '✍️',
+    bg: 'var(--c-prompt)',
+    hdr: 'var(--h-prompt)',
+    tips: [
+      { n:6,  title:'Give Claude A Role First',
+              desc:'"You Are A Senior Copywriter" changes the quality instantly.' },
+      { n:7,  title:'Specify Your Output Format',
+              desc:'Say "Bullet List" or "Table" before you ask the question.' },
+      { n:8,  title:'Think Step By Step',
+              desc:'Forces Claude to reason first, not write and guess together.' },
+      { n:9,  title:'Tell Claude What To Avoid',
+              desc:'Negative instructions are just as powerful as positive ones.' },
+      { n:10, title:'Ask For Options, Not One Answer',
+              desc:'"Give Me 5 Versions" gets better results every single time.' },
+    ]
+  },
+  {
+    id: 'claude-code',
+    label: 'Claude Code',
+    icon: '💻',
+    bg: 'var(--c-code)',
+    hdr: 'var(--h-code)',
+    tips: [
+      { n:11, title:'Install Claude Code Via Terminal',
+              desc:'Run npm install -g @anthropic-ai/claude-code to start now.' },
+      { n:12, title:'Run /init In Every New Project',
+              desc:'It reads your codebase and builds context before writing code.' },
+      { n:13, title:'Use CLAUDE.md For Coding Rules',
+              desc:'Add your standards so every session follows your exact style.' },
+      { n:14, title:'Connect MCP Servers Directly',
+              desc:'Add GitHub, Postgres, or Brave Search into your workflow.' },
+      { n:15, title:'Always Review Diffs Before Accepting',
+              desc:'Read every change before letting Claude commit to your repo.' },
+    ]
+  },
+  {
+    id: 'projects',
+    label: 'Projects',
+    icon: '📁',
+    bg: 'var(--c-proj)',
+    hdr: 'var(--h-proj)',
+    tips: [
+      { n:16, title:'One Project Per Client Or Goal',
+              desc:'Mixing contexts ruins consistency and degrades output quality.' },
+      { n:17, title:'Upload Brand Guidelines As PDFs',
+              desc:'Claude reads and applies them across every session automatically.' },
+      { n:18, title:'Pin Your Writing Style Guide',
+              desc:'Paste tone rules once and never explain your voice again.' },
+      { n:19, title:'Store Your Audience Personas',
+              desc:'Claude uses them to calibrate every piece of content it makes.' },
+      { n:20, title:'Separate Research From Creation',
+              desc:'One project to gather intel, one separate project to produce.' },
+    ]
+  },
+  {
+    id: 'extended-thinking',
+    label: 'Extended Thinking',
+    icon: '🧠',
+    bg: 'var(--c-ext)',
+    hdr: 'var(--h-ext)',
+    tips: [
+      { n:21, title:'Turn On For Hard Problems',
+              desc:'Use it when your question has no quick or obvious answer.' },
+      { n:22, title:'Use It For Strategy Work',
+              desc:'Business plans and competitive research benefit the most here.' },
+      { n:23, title:'Pair It With Long Documents',
+              desc:'Upload a 100-page PDF and ask for a deep strategic summary.' },
+      { n:24, title:'Ask "What Am I Missing Here"',
+              desc:'It surfaces blind spots that most models and humans skip past.' },
+      { n:25, title:'Let It Finish Before You React',
+              desc:'Interrupting the process produces incomplete and weak reasoning.' },
+    ]
+  },
+  {
+    id: 'artifacts',
+    label: 'Artifacts',
+    icon: '⚡',
+    bg: 'var(--c-art)',
+    hdr: 'var(--h-art)',
+    tips: [
+      { n:26, title:'Artifacts Are Live, Not Static',
+              desc:'Claude builds working HTML tools and dashboards inside chat.' },
+      { n:27, title:'Ask For A Table And Get One',
+              desc:'Say "Output As A Table" for clean and scannable data instantly.' },
+      { n:28, title:'Request React Components Directly',
+              desc:'Claude builds UI components you can copy and ship to production.' },
+      { n:29, title:'Build Calculators On The Fly',
+              desc:'"Build a pricing calculator" produces a working tool instantly.' },
+      { n:30, title:'Share Artifacts As Live Links',
+              desc:'Share interactive artifacts directly with clients and teammates.' },
+    ]
+  },
+  {
+    id: 'for-creators',
+    label: 'For Creators',
+    icon: '🎨',
+    bg: 'var(--c-creator)',
+    hdr: 'var(--h-creator)',
+    tips: [
+      { n:31, title:'Paste Samples To Match Your Voice',
+              desc:'Give three examples and say "Match This Tone" for accuracy.' },
+      { n:32, title:'Generate 20 Hooks, Pick The Best',
+              desc:'Ask for hook variations and never start from blank again.' },
+      { n:33, title:'Turn One Idea Into A Full Thread',
+              desc:'Ask Claude to expand one idea into a 10-post thread with flow.' },
+      { n:34, title:'Build Your Content Calendar Fast',
+              desc:'Drop in your topics and get a full month of posts instantly.' },
+      { n:35, title:'Repurpose One Post Into Many Formats',
+              desc:'Get a LinkedIn carousel, X thread, and email in one prompt.' },
+    ]
+  },
+  {
+    id: 'for-business',
+    label: 'For Business',
+    icon: '💼',
+    bg: 'var(--c-biz)',
+    hdr: 'var(--h-biz)',
+    tips: [
+      { n:36, title:'Summarize Contracts In Seconds',
+              desc:'Upload any PDF and ask Claude to flag key risks right away.' },
+      { n:37, title:'Write SOPs From Rough Notes',
+              desc:'Dump messy notes and Claude turns them into clean documents.' },
+      { n:38, title:'Analyze Competitor Messaging Fast',
+              desc:'Paste their copy and ask where your gaps and strengths are.' },
+      { n:39, title:'Prep For Any Meeting In Seconds',
+              desc:'Paste the agenda and get a full briefing on every item fast.' },
+      { n:40, title:'Use Claude As A Thought Partner',
+              desc:'Ask "What Am I Missing" before every major business decision.' },
+    ]
+  },
+  {
+    id: 'advanced',
+    label: 'Advanced',
+    icon: '🔬',
+    bg: 'var(--c-adv)',
+    hdr: 'var(--h-adv)',
+    tips: [
+      { n:41, title:'Chain Prompts For Complex Tasks',
+              desc:'Break big requests into steps for dramatically cleaner outputs.' },
+      { n:42, title:'Use System Prompts Via The API',
+              desc:'Inject a role and ruleset before every message for consistency.' },
+      { n:43, title:'Build Workflows With MCP Servers',
+              desc:'Connect Claude to your real tools using Model Context Protocol.' },
+      { n:44, title:'Run Claude In Full Agent Mode',
+              desc:'Let it take multi-step actions across tools without your input.' },
+      { n:45, title:'Benchmark Your Prompts Every Week',
+              desc:'Run the same eval weekly to catch quality drops before they hurt.' },
+    ]
+  },
+  {
+    id: 'power-moves',
+    label: 'Power Moves',
+    icon: '🔥',
+    bg: 'var(--c-power)',
+    hdr: 'var(--h-power)',
+    tips: [
+      { n:46, title:'Claude Stays Ad-Free Permanently',
+              desc:'Anthropic confirmed it will never inject ads into your chats.' },
+      { n:47, title:'Use Opus 4 For Your Hardest Tasks',
+              desc:'The most capable model — use the best Anthropic has built.' },
+      { n:48, title:'Know When Sonnet Beats Opus',
+              desc:'Most tasks run faster and cheaper at the Sonnet pricing tier.' },
+      { n:49, title:'Claude Has Crossed 97 Million Installs',
+              desc:'The agency standard is here. Start building with it right now.' },
+      { n:50, title:'Master Claude Now, Not Later',
+              desc:'The gap between power users and beginners widens every week.' },
+    ]
+  },
+];
+
+// ── STATE ──
+let done = new Set(JSON.parse(localStorage.getItem('claude50-done') || '[]'));
+let activeFilter = 'all';
+let query = '';
+
+const TOTAL = SECTIONS.reduce((a, s) => a + s.tips.length, 0);
+
+function saveDone() {
+  localStorage.setItem('claude50-done', JSON.stringify([...done]));
+}
+
+function esc(str) {
+  return str.replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+}
+
+function highlight(text) {
+  if (!query) return esc(text);
+  const re = new RegExp(`(${query.replace(/[.*+?^${}()|[\]\\]/g,'\\$&')})`, 'gi');
+  return esc(text).replace(re, '<mark>$1</mark>');
+}
+
+function tipVisible(t, sectionId) {
+  const filterMatch = activeFilter === 'all' || activeFilter === sectionId;
+  if (!filterMatch) return false;
+  if (!query) return true;
+  const q = query.toLowerCase();
+  return t.title.toLowerCase().includes(q) || t.desc.toLowerCase().includes(q);
+}
+
+function buildBoard() {
+  const board = document.getElementById('board');
+  board.querySelectorAll('.section-card').forEach(el => el.remove());
+
+  const frag = document.createDocumentFragment();
+  let totalVisible = 0;
+
+  SECTIONS.forEach(section => {
+    const visibleTips = section.tips.filter(t => tipVisible(t, section.id));
+    if (visibleTips.length === 0) return;
+    totalVisible += visibleTips.length;
+
+    const card = document.createElement('div');
+    card.className = 'section-card';
+
+    card.innerHTML = `
+      <div class="section-header" style="background:${section.bg}">
+        <span class="section-icon">${section.icon}</span>
+        <span class="section-label" style="color:${section.hdr}">${section.label}</span>
+        <span class="section-pill" style="color:${section.hdr}">${section.tips.length}</span>
+      </div>
+      <div class="tip-list">
+        ${section.tips.map(t => {
+          const visible = tipVisible(t, section.id);
+          const isDone = done.has(t.n);
+          return `
+            <div class="tip${isDone ? ' done' : ''}${!visible ? ' hidden' : ''}" data-n="${t.n}">
+              <div class="tip-num" style="background:${section.bg};color:${section.hdr}">${t.n}</div>
+              <div class="tip-body">
+                <div class="tip-title">${highlight(t.title)}</div>
+                <div class="tip-desc">${highlight(t.desc)}</div>
+              </div>
+              <div class="tip-check" title="Mark as done">
+                <svg width="10" height="10" viewBox="0 0 12 12" fill="none" stroke="#fff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                  <polyline points="2,6 5,9 10,3"/>
+                </svg>
+              </div>
+            </div>`;
+        }).join('')}
+      </div>`;
+
+    // wire up checkboxes
+    card.querySelectorAll('.tip-check').forEach(chk => {
+      chk.addEventListener('click', e => {
+        e.stopPropagation();
+        const tipEl = chk.closest('.tip');
+        const n = parseInt(tipEl.dataset.n);
+        if (done.has(n)) done.delete(n); else done.add(n);
+        saveDone();
+        tipEl.classList.toggle('done', done.has(n));
+        updateProgress();
+      });
+    });
+
+    frag.appendChild(card);
+  });
+
+  board.insertBefore(frag, document.getElementById('empty'));
+  document.getElementById('count').textContent = totalVisible;
+  document.getElementById('empty').classList.toggle('show', totalVisible === 0);
+  updateProgress();
+}
+
+function updateProgress() {
+  const pct = TOTAL ? (done.size / TOTAL) * 100 : 0;
+  document.getElementById('progressBar').style.width = pct + '%';
+  document.getElementById('progressSummary').innerHTML =
+    `<strong>${done.size}</strong> of ${TOTAL} tips mastered`;
+}
+
+// ── FILTER BUTTONS ──
+document.getElementById('filters').addEventListener('click', e => {
+  const btn = e.target.closest('.filter-btn');
+  if (!btn) return;
+  document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  activeFilter = btn.dataset.filter;
+  buildBoard();
+});
+
+// ── SEARCH ──
+let searchTimer;
+document.getElementById('search').addEventListener('input', e => {
+  clearTimeout(searchTimer);
+  searchTimer = setTimeout(() => {
+    query = e.target.value.trim();
+    buildBoard();
+  }, 120);
+});
+
+// ── INIT ──
+buildBoard();
+</script>
+</body>
+</html>
